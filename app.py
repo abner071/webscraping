@@ -1,3 +1,4 @@
+import argparse
 import csv
 import traceback
 
@@ -8,27 +9,54 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def main():
+def main(**kwargs):
+    """
+    Esse script realiza um webscraping no site do New York Times buscando os posts relacionados aos Estados Unidos.
+    Salva os posts coletados em um arquivo CSV com as colunas separadas por vírgula.
+    
+    Args:
+        initial-page (int): Página inicial em que começará a busca por posts.
+        last-page (int): Página final em que terminará a busca por posts.
+        all-pages (bool): Define se buscará todas as páginas. Esse parametro sobescreve o last-page.
+    
+    Returns:
+        bool: Retorna um booleano informando se criou o arquivo csv com sucesso ou não.
+    """
+
     try:
+        print(f"Buscando com parametros: {kwargs}")
+
         url = "https://www.nytimes.com/international/section/us"
 
         driver = webdriver.Chrome(options=get_chrome_options())
         driver.get(url)
 
-        total_pages = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "#stream-panel > div > div > span > strong:nth-of-type(2)")
-        )).get_attribute("innerText")
+        if kwargs['all_pages'] or kwargs['last_page']:
+            total_pages = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#stream-panel > div > div > span > strong:nth-of-type(2)")
+            )).get_attribute("innerText")
 
-        button_last_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, f"#stream-panel a[aria-label='Go to page {total_pages}']")
-        ))
-        driver.execute_script("arguments[0].click();", button_last_page)
+            if int(kwargs['last_page']) > 0:
+                target_page = kwargs['last_page']
+                
+            if int(kwargs['last_page']) > int(total_pages):
+                target_page = total_pages
+                print(f"Página {kwargs['last_page']} não existe, buscando até a página {total_pages}")
 
-        news_list = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "#stream-panel > div > ol")
+            if kwargs['all_pages']:
+                target_page = total_pages
+        
+            button_last_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                (By.CSS_SELECTOR, f"#stream-panel a[aria-label='Go to page {target_page}']")
+            ))
+            driver.execute_script("arguments[0].click();", button_last_page)
+
+        initial_page_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, f"#stream-panel  div#page-{kwargs['initial_page']}")
         ))
-        news_list_items = WebDriverWait(news_list, 10).until(EC.presence_of_all_elements_located(
-            (By.TAG_NAME, 'li')
+
+        news_list_items = WebDriverWait(initial_page_element, 10).until(EC.presence_of_all_elements_located(
+            (By.XPATH, 'following-sibling::li')
         ))
 
         posts = []
@@ -98,4 +126,10 @@ def generate_csv(posts: list) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Webscraping com Selenium")
+    parser.add_argument("--initial-page", type=int, default=1, help="Página inicial em que começará a busca")
+    parser.add_argument("--last-page", type=int, default=0, help="Página final em que terminará a busca")
+    parser.add_argument("--all-pages", action="store_true", help="Define se buscará todas as páginas")
+
+    args = vars(parser.parse_args())
+    main(**args)
