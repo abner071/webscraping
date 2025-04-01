@@ -1,2 +1,4 @@
 venv
 *.csv
+*pytest_cache*
+*pycache*
