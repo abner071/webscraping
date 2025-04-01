@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def main():
+def main() -> bool:
     """
     Esse script realiza um webscraping no site do New York Times buscando os posts relacionados aos Estados Unidos.
     Salva os posts coletados em um arquivo CSV com as colunas separadas por vírgula.
@@ -104,7 +104,7 @@ def get_chrome_options() -> Options:
     return chrome_options
 
 
-def clean_text(text):
+def clean_text(text: str) -> str:
     replacements = {
         "‘": "'", "’": "'",
         "“": '"', "”": '"',
@@ -117,7 +117,7 @@ def clean_text(text):
     return text
 
 
-def generate_csv(posts: list) -> None:
+def generate_csv(posts: list) -> bool:
     try:
         with open('./posts.csv', 'w') as csvfile:
             csv.writer(csvfile, delimiter=',')
