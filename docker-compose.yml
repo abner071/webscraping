@@ -1,0 +1,12 @@
+version: "3"
+services:
+  selenium-app:
+    build: .
+    container_name: selenium
+    shm_size: "2gb"
+    volumes:
+      - .:/app
+    environment:
+      - DISPLAY=:99
+    stdin_open: true
+    tty: true
