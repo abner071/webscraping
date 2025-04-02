@@ -26,4 +26,4 @@ COPY . /app
 # Instalando as libs python
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "-m", "script.scraping"]
+ENTRYPOINT []

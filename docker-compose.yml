@@ -2,7 +2,7 @@ version: "3"
 services:
   scraping:
     build: .
-    container_name: selenium
+    container_name: scraping
     shm_size: "2gb"
     volumes:
       - .:/app
@@ -10,3 +10,11 @@ services:
       - DISPLAY=:99
     stdin_open: true
     tty: true
+    entrypoint: ["python", "-m", "script.scraping"]
+
+  tests:
+    build: .
+    container_name: scraping_tests
+    profiles:
+      - test
+    entrypoint: ["pytest", "-v", "tests/"]
