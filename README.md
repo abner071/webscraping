@@ -91,7 +91,7 @@ Se estiver usando **Docker com volumes**, ele será salvo na pasta correspondent
 📍 **Exemplo de saída esperada**:
 
 ```csv
-title,content,owner,date
-Titulo do post 1,Conteudo do post 1,Criador do post 1,Data do post 1
-Titulo do post 2,Conteudo do post 2,Criador do post 2,Data do post 2
+title,content,owner,date,link
+Titulo do post 1,Conteudo do post 1,Criador do post 1,Data do post 1,Link do post 1
+Titulo do post 2,Conteudo do post 2,Criador do post 2,Data do post 2,Link do post 2
 ```
