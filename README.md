@@ -1,6 +1,6 @@
 # 📰 Web Scraping - New York Times
 
-Este script realiza **web scraping** no site do **New York Times**, coletando posts relacionados aos **Estados Unidos** e salvando os dados em um arquivo **CSV**.
+Este projeto realiza **web scraping** no site do **New York Times**, coletando posts relacionados aos **Estados Unidos** e salvando os dados em um arquivo **CSV**.
 
 **URL de Scraping**:  
 O scraping é realizado na página [https://www.nytimes.com/international/section/us](https://www.nytimes.com/international/section/us).
