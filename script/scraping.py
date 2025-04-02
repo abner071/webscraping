@@ -38,7 +38,7 @@ def main() -> bool:
         driver = webdriver.Chrome(options=get_chrome_options())
         driver.get(url)
 
-        aplica_filtros(driver, args)
+        apply_filters(driver, args)
 
         initial_page_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, f"#stream-panel  div#page-{args['initial_page']}")
@@ -76,7 +76,16 @@ def main() -> bool:
     return False
 
 
-def aplica_filtros(driver: webdriver, args: dict) -> None:
+def get_chrome_options() -> Options:
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--remote-debugging-port=9222")
+
+    return chrome_options
+
+
+def apply_filters(driver: webdriver, args: dict) -> None:
     if args['initial_page'] > 1 and args['last_page'] == 0:
         args['last_page'] = args['initial_page']
 
@@ -103,15 +112,6 @@ def aplica_filtros(driver: webdriver, args: dict) -> None:
             (By.CSS_SELECTOR, f"#stream-panel a[aria-label='Go to page {target_page}']")
         ))
         driver.execute_script("arguments[0].click();", button_last_page)
-
-
-def get_chrome_options() -> Options:
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--remote-debugging-port=9222")
-
-    return chrome_options
 
 
 def clean_text(text: str) -> str:
