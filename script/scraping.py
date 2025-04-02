@@ -38,39 +38,18 @@ def main() -> bool:
         driver = webdriver.Chrome(options=get_chrome_options())
         driver.get(url)
 
-        if args['initial_page'] > 1 and args['last_page'] == 0:
-            args['last_page'] = args['initial_page']
-
-        if args['all_pages'] or args['last_page']:
-            total_pages = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#stream-panel > div > div > span > strong:nth-of-type(2)")
-            )).get_attribute("innerText")
-
-            if int(args['last_page']) > 0:
-                target_page = args['last_page']
-                
-            if int(args['last_page']) > int(total_pages):
-                target_page = total_pages
-                print(f"Página {args['last_page']} não existe, buscando até a página {total_pages}")
-
-            if args['all_pages']:
-                target_page = total_pages
-        
-            button_last_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, f"#stream-panel a[aria-label='Go to page {target_page}']")
-            ))
-            driver.execute_script("arguments[0].click();", button_last_page)
+        aplica_filtros(driver, args)
 
         initial_page_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, f"#stream-panel  div#page-{args['initial_page']}")
         ))
 
-        news_list_items = WebDriverWait(initial_page_element, 10).until(EC.presence_of_all_elements_located(
+        posts_list = WebDriverWait(initial_page_element, 10).until(EC.presence_of_all_elements_located(
             (By.XPATH, 'following-sibling::li')
         ))
 
         posts = []
-        for item in news_list_items:
+        for item in posts_list:
             post_title = item.find_element(By.CSS_SELECTOR, 'a > h3').get_attribute("innerText")
             post_date = item.find_element(By.CSS_SELECTOR, "span[data-testid='todays-date']").get_attribute("innerText")
             post_paragraphs = item.find_elements(By.CSS_SELECTOR, 'article > p')
@@ -93,6 +72,35 @@ def main() -> bool:
         print(f"Falha na coleta de posts: {e} - {traceback.format_exc()}")
 
     return False
+
+
+def aplica_filtros(driver: webdriver, args: dict) -> None:
+    if args['initial_page'] > 1 and args['last_page'] == 0:
+        args['last_page'] = args['initial_page']
+
+    if args['initial_page'] > args['last_page'] and args['last_page'] > 0:
+        args['last_page'] = args['initial_page']
+        print("Parametro last_page menor que initial_page, alterado para ser igual initial_page")
+
+    if args['all_pages'] or args['last_page'] > 0:
+        total_pages = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "#stream-panel > div > div > span > strong:nth-of-type(2)")
+        )).get_attribute("innerText")
+
+        if int(args['last_page']) > 0:
+            target_page = args['last_page']
+            
+        if int(args['last_page']) > int(total_pages):
+            target_page = total_pages
+            print(f"Página {args['last_page']} não existe, buscando até a página {total_pages}")
+
+        if args['all_pages']:
+            target_page = total_pages
+    
+        button_last_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, f"#stream-panel a[aria-label='Go to page {target_page}']")
+        ))
+        driver.execute_script("arguments[0].click();", button_last_page)
 
 
 def get_chrome_options() -> Options:
