@@ -85,13 +85,13 @@ docker run --rm scraping pytest -v tests/
 
 ## 📂 Saída do Script
 
-Após a execução, o arquivo posts.csv será salvo dentro do diretório **/app** do container.  
+Após a execução, o arquivo **posts.csv** será salvo dentro do diretório **/app** do container.  
 Se estiver usando **Docker com volumes**, ele será salvo na pasta correspondente no seu sistema local.
 
 📍 **Exemplo de saída esperada**:
 
 ```csv
 title,content,owner,date
-Titulo do post 1,Conteudo do post 1,Criado do post 1,Data do post 1
-Titulo do post 2,Conteudo do post 2,Criado do post 2,Data do post 2
+Titulo do post 1,Conteudo do post 1,Criador do post 1,Data do post 1
+Titulo do post 2,Conteudo do post 2,Criador do post 2,Data do post 2
 ```
