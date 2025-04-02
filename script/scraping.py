@@ -55,12 +55,14 @@ def main() -> bool:
             post_paragraphs = item.find_elements(By.CSS_SELECTOR, 'article > p')
             post_content = post_paragraphs[0].get_attribute("innerText") if len(post_paragraphs) > 0 else ''
             post_owner = post_paragraphs[1].get_attribute("innerText") if len(post_paragraphs) > 1 else ''
+            post_link = item.find_element(By.CSS_SELECTOR, 'a').get_attribute("href")
 
             posts.append({
                 'title': clean_text(post_title),
                 'content': clean_text(post_content),
                 'owner': clean_text(post_owner),
-                'date': clean_text(post_date)
+                'date': clean_text(post_date),
+                'link': clean_text(post_link)
             })
 
         driver.quit()
