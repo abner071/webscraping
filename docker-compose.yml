@@ -1,6 +1,6 @@
 version: "3"
 services:
-  selenium-app:
+  scraping:
     build: .
     container_name: selenium
     shm_size: "2gb"
